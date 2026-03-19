@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run lint --silent & npm run type-check --silent &"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[Claude] 작업 완료. TODO.md 확인하세요.' && afplay /System/Library/Sounds/Ping.aiff &"
+          }
+        ]
+      }
+    ]
+  }
+}
