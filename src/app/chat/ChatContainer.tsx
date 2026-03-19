@@ -31,29 +31,36 @@ export default function ChatContainer() {
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
+      let buffer = ''
       let accumulated = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
-        const raw = decoder.decode(value, { stream: true })
-        const lines = raw.split('\n')
+        buffer += decoder.decode(value, { stream: true })
 
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          const payload = line.slice(6)
-          if (payload === '[DONE]') break
+        // SSE 이벤트는 \n\n 으로 구분
+        const events = buffer.split('\n\n')
+        // 마지막 불완전 청크는 버퍼에 남김
+        buffer = events.pop() ?? ''
 
-          try {
-            const parsed = JSON.parse(payload)
-            if (parsed.error) throw new Error(parsed.error)
-            if (parsed.text) {
-              accumulated += parsed.text
-              setStreamingText(accumulated)
+        for (const event of events) {
+          for (const line of event.split('\n')) {
+            if (!line.startsWith('data: ')) continue
+            const payload = line.slice(6)
+            if (payload === '[DONE]') break
+
+            try {
+              const parsed = JSON.parse(payload)
+              if (parsed.error) throw new Error(parsed.error)
+              if (parsed.text) {
+                accumulated += parsed.text
+                setStreamingText(accumulated)
+              }
+            } catch {
+              // 파싱 실패 라인 무시
             }
-          } catch {
-            // 파싱 실패 라인 무시
           }
         }
       }
@@ -70,7 +77,7 @@ export default function ChatContainer() {
 
   return (
     <div className="flex flex-col h-full">
-      <ChatWindow messages={messages} streamingText={streamingText} />
+      <ChatWindow messages={messages} streamingText={streamingText} onSuggest={handleSend} />
       <ChatInput onSend={handleSend} disabled={isStreaming} />
     </div>
   )
