@@ -4,7 +4,16 @@
       "Bash(npm install:*)",
       "Bash(npx prisma:*)",
       "Bash(npm run:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(ls -la \"C:\\\\health-supplement-app\\\\src\\\\app\\\\\\(auth\\)\")",
+      "Bash(taskkill /PID 21072 /F)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3000\")",
+      "Bash(taskkill:*)",
+      "Bash(findstr \":3000 \")",
+      "Bash(xargs -I{} taskkill /F /PID {})",
+      "Bash(powershell -Command \"Get-Process -Id 21072 | Select-Object Name, Path, Id\" 2>&1)",
+      "Bash(powershell -Command \"Stop-Process -Id 21072 -Force\" 2>&1)"
     ]
   }
 }
