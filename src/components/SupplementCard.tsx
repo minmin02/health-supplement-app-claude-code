@@ -28,7 +28,7 @@ export default function SupplementCard({ supplement }: Props) {
       {benefits.length > 0 && (
         <div className="mt-2">
           <ul className="flex flex-wrap gap-1">
-            {benefits.slice(0, 3).map((benefit) => (
+            {benefits.slice(0, 3).map((benefit: string) => (
               <li key={benefit} className="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded">
                 {benefit}
               </li>
