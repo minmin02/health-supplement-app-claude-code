@@ -1,6 +1,10 @@
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
 import { SupplementService } from '@/services/SupplementService'
+import { BookmarkService } from '@/services/BookmarkService'
+import { authOptions } from '@/lib/auth'
 import Disclaimer from '@/components/Disclaimer'
+import BookmarkButton from '@/components/BookmarkButton'
 import SupplementTabs from './SupplementTabs'
 
 interface Props {
@@ -17,6 +21,12 @@ export default async function SupplementDetailPage({ params }: Props) {
     notFound()
   }
 
+  const session = await getServerSession(authOptions)
+  const isLoggedIn = session !== null
+  const initialBookmarked = isLoggedIn
+    ? await BookmarkService.isBookmarked(session.user.id, id)
+    : false
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
       <div className="mb-6">
@@ -26,12 +36,21 @@ export default async function SupplementDetailPage({ params }: Props) {
       </div>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">{supplement.name}</h1>
-        {supplement.brand && (
-          <p className="mt-1 text-sm text-gray-500">{supplement.brand}</p>
-        )}
-        {supplement.description && (
-          <p className="mt-4 text-sm leading-relaxed text-gray-700">{supplement.description}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{supplement!.name}</h1>
+            {supplement!.brand && (
+              <p className="mt-1 text-sm text-gray-500">{supplement!.brand}</p>
+            )}
+          </div>
+          <BookmarkButton
+            supplementId={supplement!.id}
+            initialBookmarked={initialBookmarked}
+            isLoggedIn={isLoggedIn}
+          />
+        </div>
+        {supplement!.description && (
+          <p className="mt-4 text-sm leading-relaxed text-gray-700">{supplement!.description}</p>
         )}
       </div>
 
